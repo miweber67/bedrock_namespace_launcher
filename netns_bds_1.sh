@@ -4,7 +4,11 @@
 # Server #
 NUMBER=1
 
-ADDRESS=172.22.23.6${NUMBER}
+# Choose a block of IP addresses that your DHCP server will NOT hand out
+# to use for your bedrock servers. For example, this test assumes
+# 192.168.1.61 will be used, by combining "192.168.1.6" with the server
+# number, 1: "192.168.1.6" + "1" = "192.168.1.61"
+ADDRESS=192.168.1.6${NUMBER}
 
 #activate ipv4 routing
 sudo sysctl -w net.ipv4.ip_forward=1
@@ -41,5 +45,9 @@ sudo ip netns exec bds_net_${NUMBER} sysctl -w net.ipv4.conf.mv${NUMBER}.use_tem
 # but THIS IS A SECURITY RISK.
 # sudo ip netns exec bds_net_${NUMBER} ./bedrock_server
 
-sudo ip netns exec bds_net_${NUMBER} setuidgid mike ./bedrock_server
+# It is also recommended to create an unprivileged user separate from
+# your main accounts to host the servers. This way if the server is
+# remotely compromised, the attacker does not start out with privileges
+# that can be used to harm your machine right away.
+sudo ip netns exec bds_net_${NUMBER} setuidgid bds ./bedrock_server
 
